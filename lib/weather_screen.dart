@@ -6,6 +6,7 @@ import "package:weather_app/hourly_forecast_card.dart";
 
 import "package:weather_app/secrets.dart";
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
@@ -82,7 +83,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // main card
                 SizedBox(
@@ -126,52 +127,44 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
 
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Weather Forecast",
                       style:
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     // scroll in case cards overflow horizontally
-                    SingleChildScrollView(
-                      scrollDirection:
-                          Axis.horizontal, // make scroll axis horizontal
-                      child: Row(
-                        children: [
-                          HourlyForeCastCard(
-                            time: '09:00',
-                            icon: Icons.cloud,
-                            temp: '230.32',
-                          ),
-                          HourlyForeCastCard(
-                            time: '12:00',
-                            icon: Icons.sunny,
-                            temp: '230.32',
-                          ),
-                          HourlyForeCastCard(
-                            time: '13:00',
-                            icon: Icons.sunny_snowing,
-                            temp: '230.32',
-                          ),
-                          HourlyForeCastCard(
-                            time: '15:00',
-                            icon: Icons.air,
-                            temp: '230.32',
-                          ),
-                          HourlyForeCastCard(
-                            time: '17:00',
-                            icon: Icons.cloud,
-                            temp: '230.32',
-                          ),
-                        ],
+                    SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: data['cnt'],
+                        itemBuilder: (context, i) {
+                          final hourlyForecastData = data['list'][i];
+                          final weatherCondition =
+                              hourlyForecastData['weather'][0]['main'];
+                          final time =
+                              DateTime.parse(hourlyForecastData['dt_txt']);
+                          return HourlyForeCastCard(
+                            time: DateFormat.Hm().format(time),
+                            icon: weatherCondition == "Rain"
+                                ? Icons.cloudy_snowing
+                                : weatherCondition == "Clouds"
+                                    ? Icons.cloud
+                                    : Icons.sunny,
+                            temp: '${hourlyForecastData['main']['temp']}',
+                          );
+                        },
                       ),
-                    ),
+                    )
                   ],
                 ),
+                const SizedBox(height: 20),
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

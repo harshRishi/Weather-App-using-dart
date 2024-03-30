@@ -25,6 +25,8 @@ class HourlyForeCastCard extends StatelessWidget {
         child: Column(
           children: [
             Text(
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               time,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
