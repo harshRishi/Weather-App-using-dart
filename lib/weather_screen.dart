@@ -16,7 +16,9 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  Future<Map<String, dynamic>> getCurrentWeather() async {
+  late Future<Map<String, dynamic>> weatherData;
+
+  Future<Map<String, dynamic>> _getCurrentWeather() async {
     String cityName = 'London';
     try {
       final res = await http.get(
@@ -33,7 +35,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
-  void _refreshData() {}
+  @override
+  void initState() {
+    super.initState();
+    weatherData = _getCurrentWeather();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +52,18 @@ class _WeatherScreenState extends State<WeatherScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: _refreshData,
+            onPressed: () {
+              setState(() {
+                weatherData = _getCurrentWeather();
+              });
+            },
             icon: const Icon(Icons.refresh),
           )
         ],
       ),
       // use for api request and get data
       body: FutureBuilder(
-        future: getCurrentWeather(),
+        future: weatherData,
         builder: (context, snapshot) {
           // this checks the request status
           if (snapshot.connectionState == ConnectionState.waiting) {
